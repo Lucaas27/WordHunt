@@ -6,7 +6,9 @@ function App() {
 
   return (
     <div className='App'>
-      <nav>WordHunt</nav>
+      <nav>
+        <h1>WordHunt</h1>
+      </nav>
       <Board />
       <Keyboard />
     </div>
