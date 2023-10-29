@@ -8,7 +8,7 @@ Each array will correspond to an attempt
 */
 
 // This creates an array with 6 elements, and for each element, it creates a new array with 5 empty strings
-const boardDefault = Array.from({ length: 6 }, () => Array(5).fill(""));
+const boardDefault = Array.from({ length: 6 }, () => Array(5).fill(''))
 
 // Create a react context for board
 export const BoardContext = createContext()
