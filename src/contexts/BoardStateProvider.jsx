@@ -6,6 +6,7 @@ Each array will correspond to an attempt
 */
 
 import { createContext, useState } from 'react'
+import cloneDeep from 'lodash/cloneDeep'
 
 // Create a react context for board
 export const BoardContext = createContext()
@@ -21,8 +22,51 @@ export function BoardStateProvider({ children }) {
   // State to manage current guess
   const [guess, setGuess] = useState(intialGuess)
 
+  /* 
+  Use Lodash to create a new deep copy of the board matrix.
+  We cannot change states directly in react.
+  The spread operator technique would not work here i.e. [...board]
+  Because elements of the board array are other arrays.
+  It would create new references to the same arrays,
+  meaning changes to those arrays within the new array will still affect the original array.
+  */
+  const onSelectLetter = (keyVal) => {
+    if (guess.letterPos > 4) return
+    const newBoard = cloneDeep(board)
+    newBoard[guess.attempt][guess.letterPos] = keyVal
+    setBoard(newBoard)
+    setGuess({ ...guess, letterPos: guess.letterPos + 1 })
+  }
+
+  const onEnter = () => {
+    // Do NOT move vertically if the last letter is not filled
+    if (guess.letterPos < 5) return
+    // Move to the next attempt onto the first Letter
+    setGuess({ attempt: guess.attempt + 1, letterPos: 0 })
+  }
+
+  const onDelete = () => {
+    if (guess.letterPos === 0) return
+    // Set the letter to be deleted to an empty string in the board
+    const newBoard = cloneDeep(board)
+    newBoard[guess.attempt][guess.letterPos - 1] = ''
+    setBoard(newBoard)
+    // Move position back to the deleted letter
+    setGuess({ ...guess, letterPos: guess.letterPos - 1 })
+  }
+
   return (
-    <BoardContext.Provider value={{ board, setBoard, guess, setGuess }}>
+    <BoardContext.Provider
+      value={{
+        board,
+        setBoard,
+        guess,
+        setGuess,
+        onDelete,
+        onEnter,
+        onSelectLetter,
+      }}
+    >
       {children}
     </BoardContext.Provider>
   )
