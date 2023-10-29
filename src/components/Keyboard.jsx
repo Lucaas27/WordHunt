@@ -1,4 +1,4 @@
-import Keys from './Keys'
+import Key from './Key'
 
 function Keyboard() {
   // Create three arrays for each row of the keyboard
@@ -10,17 +10,17 @@ function Keyboard() {
     <div className='keyboard'>
       <div className='first-row'>
         {keysFirstRow.map((key, index) => (
-          <Keys keyVal={key} key={index} />
+          <Key keyVal={key} key={index} />
         ))}
       </div>
       <div className='second-row'>
         {keysSecondRow.map((key, index) => (
-          <Keys keyVal={key} key={index} />
+          <Key keyVal={key} key={index} />
         ))}
       </div>
       <div className='third-row'>
         {keysThirdRow.map((key, index) => (
-          <Keys keyVal={key} key={index} bigKey />
+          <Key keyVal={key} key={index} bigKey />
         ))}
       </div>
     </div>
