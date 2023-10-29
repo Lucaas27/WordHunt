@@ -1,22 +1,18 @@
 import { useContext } from 'react'
 import { BoardContext } from '../contexts/BoardStateProvider'
-import cloneDeep from 'lodash/cloneDeep'
 
 function Key({ keyVal }) {
-  const { board, setBoard } = useContext(BoardContext)
+  // Use useContext with BoardContext to access functions used to modify states
+  const { onDelete, onEnter, onSelectLetter } = useContext(BoardContext)
 
   const selectLetterHandler = () => {
-    /* 
-    Use Lodash to create a new deep copy of the board matrix.
-    We cannot change states directly in react.
-    The spread operator technique would not work here i.e. [...board]
-    Because elements of the board array are other arrays.
-    It would create new references to the same arrays,
-    meaning changes to those arrays within the new array will still affect the original array.
-    */
-    const newBoard = cloneDeep(board)
-    newBoard[0][0] = keyVal
-    setBoard(newBoard)
+    if (keyVal === 'ENTER') {
+      onEnter()
+    } else if (keyVal === 'DELETE') {
+      onDelete()
+    } else {
+      onSelectLetter(keyVal)
+    }
   }
 
   return (
