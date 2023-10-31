@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useContext } from 'react'
+import { useEffect, useContext } from 'react'
 import Key from './Key'
 import { BoardContext } from '../contexts/BoardStateProvider'
 
@@ -8,32 +8,29 @@ function Keyboard() {
   const keysSecondRow = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L']
   const keysThirdRow = ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'DELETE']
 
-  const { board, onDelete, onEnter, onSelectLetter } = useContext(BoardContext)
+  const { onDelete, onEnter, onSelectLetter } = useContext(BoardContext)
 
-  const handleKeyDown = useCallback(
-    (event) => {
-      if (event.key === 'Enter') {
-        onEnter()
-      } else if (event.key === 'Backspace' || event.key === 'Delete') {
-        onDelete()
-      } else {
-        // Create an array containing all keys, excluding 'ENTER' and 'DELETE'
-        const keys = [
-          ...keysFirstRow,
-          ...keysSecondRow,
-          ...keysThirdRow.filter((key) => key !== 'ENTER' && key !== 'DELETE'),
-        ]
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      onEnter()
+    } else if (event.key === 'Backspace' || event.key === 'Delete') {
+      onDelete()
+    } else {
+      // Create an array containing all keys, excluding 'ENTER' and 'DELETE'
+      const keys = [
+        ...keysFirstRow,
+        ...keysSecondRow,
+        ...keysThirdRow.filter((key) => key !== 'ENTER' && key !== 'DELETE'),
+      ]
 
-        /* 
+      /* 
       Check if array includes the letter being pressed.
       If it does, call onSelectLetter with the value being keyed.
       */
-        keys.includes(event.key.toUpperCase()) &&
-          onSelectLetter(event.key.toUpperCase())
-      }
-    },
-    [board]
-  )
+      keys.includes(event.key.toUpperCase()) &&
+        onSelectLetter(event.key.toUpperCase())
+    }
+  }
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown)
