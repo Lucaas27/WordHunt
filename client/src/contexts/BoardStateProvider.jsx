@@ -11,6 +11,8 @@ import cloneDeep from 'lodash/cloneDeep'
 // Create a react context for board
 export const BoardContext = createContext()
 
+let correctWord = 'RIGHT'
+
 export function BoardStateProvider({ children }) {
   // This creates an array with 6 elements, and for each element, it creates a new array with 5 empty strings
   const boardDefault = Array.from({ length: 6 }, () => Array(5).fill(''))
@@ -65,6 +67,7 @@ export function BoardStateProvider({ children }) {
         onDelete,
         onEnter,
         onSelectLetter,
+        correctWord,
       }}
     >
       {children}
