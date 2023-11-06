@@ -7,13 +7,12 @@ Each array will correspond to an attempt
 
 import { createContext, useState } from 'react'
 import cloneDeep from 'lodash/cloneDeep'
+import { checkDictionary } from '../services/dictionaryCheck'
 
 // Create a react context for board
 export const BoardContext = createContext()
 
-let correctWord = 'RIGHT'
-
-export function BoardStateProvider({ children }) {
+export function BoardStateProvider({ children, word }) {
   // This creates an array with 6 elements, and for each element, it creates a new array with 5 empty strings
   const boardDefault = Array.from({ length: 6 }, () => Array(5).fill(''))
   // Initial guess object
@@ -23,7 +22,6 @@ export function BoardStateProvider({ children }) {
   const [board, setBoard] = useState(boardDefault)
   // State to manage current guess
   const [guess, setGuess] = useState(intialGuess)
-
   /* 
   Use Lodash to create a new deep copy of the board matrix.
   We cannot change states directly in react.
@@ -40,10 +38,34 @@ export function BoardStateProvider({ children }) {
     setGuess({ ...guess, letterPos: guess.letterPos + 1 })
   }
 
-  const onEnter = () => {
+  const onEnter = async () => {
     // Do NOT move vertically if the last letter is not filled
     if (guess.letterPos < 5) return
-    // Move to the next attempt onto the first Letter
+    // Get the word attempted based on the the currect attempt (row)
+    let wordAttempted = board[guess.attempt].join('')
+
+    // Call dictionary API to check word validity.
+    const wordCheckResult = async () => {
+      const result = await checkDictionary(wordAttempted)
+      return result
+    }
+
+    // Word is only invalid if it is not in our dictionary and is not the right word
+    let isWordInvalid =
+      (await wordCheckResult().then((result) =>
+        result.InvalidWord ? true : false
+      )) && word.toUpperCase() !== wordAttempted.toUpperCase()
+
+    if (!isWordInvalid) {
+      console.log('Valid word')
+    } else {
+      alert(
+        `'${wordAttempted.toUpperCase()}' is not a word in our dictionary! Try again!`
+      )
+      return
+    }
+
+    // Move to the next attempt(row) onto the first Letter(column)
     setGuess({ attempt: guess.attempt + 1, letterPos: 0 })
   }
 
@@ -61,13 +83,13 @@ export function BoardStateProvider({ children }) {
     <BoardContext.Provider
       value={{
         board,
+        word,
         setBoard,
         guess,
         setGuess,
         onDelete,
         onEnter,
         onSelectLetter,
-        correctWord,
       }}
     >
       {children}
